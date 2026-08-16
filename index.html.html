@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Santi Agustina's Space (SAS) - Hukum Bernoulli & Evaluasi Hitungan</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-gradient: linear-gradient(135deg, #fbcfe8 0%, #fef08a 50%, #bae6fd 100%);
+    --primary: #ec4899;
+    --primary-dark: #be185d;
+    --accent: #f59e0b;
+    --text-dark: #334155;
+    --soft-pink: #fdf2f8;
+    --soft-yellow: #fefce8;
+    --soft-blue: #f0f9ff;
+    --success: #10b981;
+    --danger: #ef4444;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+  
+  body {
+    background: var(--bg-gradient);
+    color: var(--text-dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+  }
+
+  .microsite-container {
+    width: 92%;
+    max-width: 1300px;
+    background: #ffffff;
+    border-radius: 28px;
+    box-shadow: 0 20px 40px rgba(236, 72, 153, 0.15);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    border: 4px solid #ffffff;
+    transition: all 0.3s ease;
+  }
+
+  header {
+    background: linear-gradient(135deg, #f472b6, #60a5fa);
+    color: white;
+    padding: 25px 30px;
+    text-align: center;
+    position: relative;
+  }
+
+  header h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 4px; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+  header p { font-size: 1rem; font-weight: 600; opacity: 0.95; }
+
+  .profile-btn {
+    position: absolute;
+    top: 20px; right: 20px;
+    background: rgba(255, 255, 255, 0.3);
+    border: 2px solid white; color: white;
+    padding: 6px 14px; border-radius: 99px;
+    font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.3s;
+  }
+  .profile-btn:hover { background: white; color: var(--primary-dark); }
+
+  .nav-tabs {
+    display: flex; background: #f1f5f9; justify-content: center;
+    gap: 8px; padding: 10px; flex-wrap: wrap; border-bottom: 2px solid #e2e8f0;
+  }
+
+  .nav-tab {
+    background: transparent; border: none; color: #64748b;
+    padding: 8px 16px; font-size: 0.9rem; font-weight: 700;
+    cursor: pointer; border-radius: 99px; transition: all 0.3s;
+  }
+
+  .nav-tab.active, .nav-tab:hover {
+    background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+  }
+
+  .section { display: none; padding: 25px; animation: fadeIn 0.4s ease-in-out; }
+  .section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .split-layout {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 25px; align-items: center;
+  }
+
+  @media(max-width: 768px) { .split-layout { grid-template-columns: 1fr; } }
+
+  .left-image-pane {
+    background: var(--soft-blue); border: 2px solid #bae6fd;
+    border-radius: 20px; padding: 20px; display: flex;
+    flex-direction: column; align-items: center; justify-content: center; min-height: 280px; text-align: center;
+    position: relative; overflow: hidden;
+  }
+
+  .slide-asset-img {
+    width: 100%;
+    max-height: 250px;
+    object-fit: contain;
+    border-radius: 12px;
+  }
+
+  .right-desc-pane { display: flex; flex-direction: column; gap: 12px; }
+
+  h2 { color: var(--primary-dark); font-size: 1.5rem; margin-bottom: 5px; }
+  p, li { font-size: 0.94rem; line-height: 1.5; color: #475569; margin-bottom: 6px; }
+  ul { padding-left: 18px; }
+
+  .slide-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+
+  .sim-wrapper { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+  
+  .sim-box { 
+    background: #0f172a; 
+    border-radius: 20px; 
+    padding: 20px; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 12px; 
+    position: relative;
+  }
+  
+  .sim-box:fullscreen {
+    padding: 30px;
+    justify-content: center;
+    border-radius: 0;
+  }
+
+  canvas { width: 100%; max-width: 700px; height: 230px; background: #1e293b; border-radius: 12px; }
+  
+  .controls { display: flex; gap: 12px; width: 100%; max-width: 700px; color: white; justify-content: space-around; align-items: center; flex-wrap: wrap; background: rgba(255,255,255,0.08); padding: 12px; border-radius: 10px; font-size: 0.85rem; }
+  .control-group { display: flex; flex-direction: column; gap: 4px; }
+  input[type=range] { cursor: pointer; accent-color: var(--accent); }
+  
+  .power-btn { background: var(--danger); color: white; border: none; padding: 8px 16px; font-weight: bold; border-radius: 99px; cursor: pointer; transition: 0.2s; }
+  .power-btn.active { background: var(--success); }
+
+  .fullscreen-btn {
+    background: #0284c7; color: white; border: none; padding: 8px 16px;
+    font-size: 0.85rem; font-weight: 700; border-radius: 99px; cursor: pointer;
+    box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3); transition: 0.2s; margin-top: 5px;
+  }
+  .fullscreen-btn:hover { background: #0369a1; }
+
+  .quiz-box { background: var(--soft-yellow); padding: 20px; border-radius: 20px; border: 2px solid #fde047; max-height: 420px; overflow-y: auto; }
+  .option-btn, .tf-btn { display: block; width: 100%; text-align: left; background: white; border: 2px solid #e2e8f0; padding: 10px 14px; margin: 8px 0; border-radius: 10px; font-size: 0.92rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .option-btn:hover, .tf-btn:hover { background: #fdf2f8; border-color: #f472b6; }
+  .option-btn.correct, .tf-btn.correct { background: #d1fae5; border-color: var(--success); color: #065f46; }
+  .option-btn.wrong, .tf-btn.wrong { background: #fee2e2; border-color: var(--danger); color: #991b1b; }
+
+  .input-short { width: 100%; padding: 10px; border-radius: 8px; border: 2px solid #cbd5e1; margin-top: 8px; font-size: 1rem; }
+  
+  .btn-action {
+    background: var(--primary); color: white; border: none; padding: 8px 18px;
+    font-size: 0.9rem; font-weight: 700; border-radius: 99px; cursor: pointer;
+    box-shadow: 0 4px 10px rgba(236, 72, 153, 0.3); margin-top: 10px;
+  }
+  .btn-action:hover { opacity: 0.9; }
+
+  .modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 100;
+  }
+  .modal-card {
+    background: white; padding: 30px; border-radius: 24px; max-width: 400px; width: 90%;
+    text-align: center; position: relative; box-shadow: 0 20px 25px rgba(0,0,0,0.1); border-top: 6px solid var(--primary);
+  }
+  .modal-card h3 { color: var(--primary-dark); margin-bottom: 10px; font-size: 1.5rem; }
+  .close-modal {
+    position: absolute; top: 15px; right: 15px; background: #f1f5f9; border: none;
+    width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer;
+  }
+
+  footer { text-align: center; color: #475569; font-size: 0.9rem; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- MODAL POP-UP SIGN IN / IDENTITAS SISWA -->
+<div id="student-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); display: flex; justify-content: center; align-items: center; z-index: 9999;">
+  <div style="background: white; padding: 25px; border-radius: 20px; max-width: 380px; width: 90%; text-align: center; font-family: sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+    <h3 style="margin-bottom: 10px; color: #be185d;">Mulai Belajar 👋</h3>
+    <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">Masukkan identitas Anda sebelum mengakses modul.</p>
+    
+    <input type="text" id="input-student-name" placeholder="Nama Lengkap" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box;">
+    <input type="text" id="input-student-class" placeholder="Kelas / Rombel" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box;">
+    
+    <p id="student-modal-error" style="color: red; font-size: 0.8rem; display: none; margin-bottom: 10px; font-weight: bold;">⚠️ Nama dan Kelas wajib diisi!</p>
+    
+    <button onclick="saveStudentIdentity()" style="width: 100%; padding: 12px; background: #ec4899; color: white; border: none; border-radius: 99px; font-weight: bold; cursor: pointer; font-size: 0.95rem;">Masuk ke Modul 🚀</button>
+  </div>
+</div>
+
+<div class="microsite-container">
+  <!-- HEADER -->
+  <header>
+    <button class="profile-btn" onclick="toggleModal(true)">👤 Profil Pendesain</button>
+    <h1>✨ Santi Agustina's Space (SAS)</h1>
+    <p>Modul Interaktif: Hukum Bernoulli & Vacuum Cleaner Portabel</p>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('beranda')">Beranda</button>
+    <button class="nav-tab" onclick="switchTab('materi')">Materi (5 Slide)</button>
+    <button class="nav-tab" onclick="switchTab('simulasi')">Simulasi Vacuum Lab</button>
+    <button class="nav-tab" onclick="switchTab('evaluasi')">Evaluasi (10 Soal)</button>
+  </nav>
+
+  <!-- SECTION 1: BERANDA -->
+  <section id="beranda" class="section active">
+    <div class="split-layout">
+      <div class="left-image-pane">
+        <img src="assets/img/cover-beranda.png" style="width: 100%; height: 300px; object-fit: cover; border-radius: 12px;" onerror="this.src='https://via.placeholder.com/600x300?text=Cover+Beranda'">
+      </div>
+
+      <div class="right-desc-pane">
+        <h2>Selamat Datang di Santi Agustina's Space (SAS)!</h2>
+
+        <div id="student-info-banner" style="display: none; background: #fce7f3; color: #be185d; padding: 8px 16px; border-radius: 12px; margin: 10px 0; width: fit-content; font-weight: bold; font-size: 0.95rem; border: 1px solid #fbcfe8;">
+          📌 Siswa: <span id="welcome-student-name">-</span> | Kelas: <span id="welcome-student-class">-</span>
+        </div>
+
+        <p>Modul digital interaktif ini mendalami konsep <b>Hukum Bernoulli</b>, dilengkapi apersepsi, materi 5 slide dengan visual pendukung, simulasi virtual lab, dan evaluasi 10 soal</p>
+        
+        <div style="background: var(--soft-pink); padding: 12px; border-radius: 12px; border: 2px dashed #f472b6;">
+          <p style="font-size: 0.9rem; font-weight: 700; color: var(--primary-dark);">🌟 Pilih menu <b style="color: #0284c7;">Evaluasi (10 Soal)</b> untuk menguji tingkat pemahaman Anda!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: MATERI -->
+  <section id="materi" class="section">
+    <div class="split-layout">
+      <div class="left-image-pane" id="slide-image-container"></div>
+      <div class="right-desc-pane">
+        <h2 id="slide-title-text">Judul Slide</h2>
+        <div id="slide-desc-text">Deskripsi materi...</div>
+        <div class="slide-nav">
+          <button class="btn-action" id="prev-slide" onclick="changeSlide(-1)">◀ Sebelumnya</button>
+          <span id="slide-indicator" style="font-weight: 700; color: var(--primary-dark); font-size: 0.9rem;">Slide 1 dari 5</span>
+          <button class="btn-action" id="next-slide" onclick="changeSlide(1)">Selanjutnya ▶</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: SIMULASI VIRTUAL LAB -->
+  <section id="simulasi" class="section">
+    <div class="split-layout">
+      <div class="sim-wrapper">
+        <div class="sim-box" id="simBox">
+          <h3 style="color:#38bdf8; font-size:1.1rem; margin-bottom:4px;">Virtual Lab: Aliran Udara & Tekanan Vacuum</h3>
+          <canvas id="vacuumCanvas" width="600" height="200"></canvas>
+          <button class="fullscreen-btn" onclick="toggleFullScreenSim()">🖥️ Mode Layar Penuh (Fullscreen)</button>
+        </div>
+      </div>
+      <div class="right-desc-pane">
+        <h2>Kontrol Eksperimen Vacuum</h2>
+        <p>Nyalakan power, atur potensiometer kecepatan, dan ubah luas penampang tabung untuk melihat perubahan tekanan dan hisapan debu secara real-time!</p>
+        <div class="controls" style="background: var(--soft-blue); color: var(--text-dark); border: 1px solid #bae6fd;">
+          <div class="control-group">
+            <label><b>Power:</b></label>
+            <button class="power-btn" id="power-toggle" onclick="togglePower()">OFF ⏻</button>
+          </div>
+          <div class="control-group">
+            <label>Potensiometer: <span id="val-pot">Level 1</span></label>
+            <input type="range" id="slider-pot" min="1" max="5" step="1" value="1" oninput="updatePot(this.value)">
+          </div>
+          <div class="control-group">
+            <label>Luas Penampang (A): <span id="val-area">Normal</span></label>
+            <input type="range" id="slider-area" min="0.5" max="1.5" step="0.5" value="1.0" oninput="updateArea(this.value)">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: EVALUASI -->
+  <section id="evaluasi" class="section">
+    <div class="split-layout">
+      <div class="left-image-pane" style="background: var(--soft-yellow);" id="eval-img-pane">
+        <img src="https://via.placeholder.com/400x300?text=Evaluasi+Fisika" alt="Gambar Evaluasi" class="slide-asset-img">
+      </div>
+      <div class="right-desc-pane">
+        <h2>Evaluasi Pembelajaran Fisika</h2>
+        <div class="quiz-box" id="quiz-container">
+          <p id="quiz-question" style="font-weight: 700; font-size: 0.92rem; margin-bottom: 8px;"></p>
+          <div id="quiz-options"></div>
+          <p id="quiz-feedback" style="margin-top: 8px; font-weight: bold; font-size: 0.85rem;"></p>
+          <button class="btn-action" id="next-quiz-btn" style="display:none;" onclick="nextQuiz()">Soal Selanjutnya ▶</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- MODAL PROFIL PENDESAIN -->
+<div class="modal-overlay" id="profile-modal">
+  <div class="modal-card">
+    <button class="close-modal" onclick="toggleModal(false)">✕</button>
+    <h3 style="margin-top: 10px;">Profil Pendesain</h3>
+    <div style="margin: 15px 0;">
+      <div style="width: 110px; height: 110px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; border-radius: 50%; padding: 4px; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 3px solid var(--primary);">
+        <img src="logo web santi.jpg" alt="Santi Agustina's Space Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;">
+      </div>
+      <p style="font-weight: 800; font-size: 1.2rem; color: var(--text-dark);">Santi Agustina, M.Pd.</p>
+      <p style="font-size: 0.95rem; color: #64748b;">Guru Fisika SMAN 2 Tanah Putih</p>
+    </div>
+    <p style="font-size: 0.9rem; background: var(--soft-pink); padding: 10px; border-radius: 10px;">Pengerjaan modul digital interaktif Santi Agustina's Space (SAS) untuk mendukung pembelajaran fisika modern.</p>
+  </div>
+</div>
+
+<footer>
+  <p>Santi Agustina's Space (SAS) • Pembelajaran Fisika Interaktif Bermutu</p>
+</footer>
+
+<script>
+  function switchTab(tabId) {
+    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    event.currentTarget.classList.add('active');
+    if(tabId === 'simulasi') initVacuumCanvas();
+  }
+
+  function toggleModal(show) {
+    document.getElementById('profile-modal').style.display = show ? 'flex' : 'none';
+  }
+
+  function toggleFullScreenSim() {
+    let simBox = document.getElementById('simBox');
+    if (!document.fullscreenElement) {
+      if (simBox.requestFullscreen) simBox.requestFullscreen();
+      else if (simBox.webkitRequestFullscreen) simBox.webkitRequestFullscreen();
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen();
+    }
+  }
+
+  const slidesData = [
+    {
+      title: "Slide 1: Apersepsi & Motivasi",
+      content: `<p style="font-weight:700; color:var(--primary-dark);">🎯 Pertanyaan Pemantik:</p><p>Pernahkah kamu bertanya-tanya, bagaimana pesawat yang berat bisa terangkat? Atau mengapa debu tersedot ke <i>vacuum cleaner</i>?</p><p style="margin-top:6px; font-weight:700; color:var(--primary-dark);">💡 Motivasi Belajar:</p><p>Mari temukan jawabannya melalui konsep <b>Hukum Bernoulli</b>!</p>`,
+      imgSrc: "assets/img/materi-1.jpeg" 
+    },
+    {
+      title: "Slide 2: Konsep & Bunyi Hukum Bernoulli",
+      content: `<p>Hukum Bernoulli menyatakan bahwa <b>peningkatan kecepatan aliran fluida terjadi bersamaan dengan penurunan tekanan</b> pada titik yang sama.</p><ul style="margin-top:4px; font-size:0.86rem;"><li>Jumlah tekanan, energi kinetik, dan potensial bernilai konstan.</li><li>Kecepatan tinggi ➔ tekanan rendah.</li><li>Kekekalan energi mekanik fluida.</li></ul>`,
+      imgSrc: "assets/img/materi-2.jpeg"
+    },
+    {
+      title: "Slide 3: Rumus Persamaan Bernoulli",
+      content: `<p style="font-size:0.88rem;">Persamaan matematis:</p><div style="background:var(--soft-yellow); padding:5px 8px; border-radius:6px; font-family:monospace; font-weight:bold; margin:4px 0; border:1px solid #fde047; font-size:0.8rem;">P₁ + ½ρv₁² + ρgh₁ = P₂ + ½ρv₂² + ρgh₂</div><ul style="font-size:0.82rem;"><li><b>P</b> = Tekanan ($N/m^2$) | <b>ρ</b> = Massa jenis ($kg/m^3$)</li><li><b>v</b> = Kecepatan ($m/s$) | <b>g</b> = Gravitasi ($m/s^2$)</li><li><b>h</b> = Ketinggian (m)</li></ul>`,
+      imgSrc: "assets/img/materi-3.jpeg"
+    },
+    {
+      title: "Slide 4: Penerapan dalam Kehidupan Sehari-hari",
+      content: `<ul style="font-size:0.86rem;"><li><b>Sayap Pesawat Terbang:</b> Aerofoil menciptakan kecepatan atas lebih tinggi sehingga tekanan atas lebih kecil dari bawah, menghasilkan gaya angkat.</li><li><b>Venturimeter & Tabung Pitot:</b> Pengukur kecepatan aliran cairan/gas.</li><li><b>Penyemprot Parfum:</b> Kecepatan udara menarik cairan ke atas.</li></ul>`,
+      imgSrc: "assets/img/materi-4.jpeg"
+    },
+    {
+      title: "Slide 5: Kontekstual - Vacuum Cleaner Portabel",
+      content: `<p style="font-size:0.88rem;">Pada <b>vacuum cleaner mini</b>:</p><ul style="font-size:0.84rem;"><li><b>Baling-baling:</b> Berputar kencang oleh motor listrik.</li><li><b>Penurunan Tekanan:</b> Kecepatan udara tinggi menurunkan tekanan tabung.</li><li><b>Hisapan Debu:</b> Perbedaan tekanan ($P_{luar} > P_{dalam}$) mendorong udara dan debu masuk.</li></ul>`,
+      imgSrc: "assets/img/materi-5.jpeg"
+    }
+  ];
+
+  let currentSlide = 0;
+  function renderSlide() {
+    let data = slidesData[currentSlide];
+    document.getElementById('slide-title-text').textContent = data.title;
+    document.getElementById('slide-desc-text').innerHTML = data.content;
+    document.getElementById('slide-image-container').innerHTML = `<img src="${data.imgSrc}" alt="${data.title}" class="slide-asset-img">`;
+    document.getElementById('slide-indicator').textContent = `Slide ${currentSlide + 1} dari 5`;
+    document.getElementById('prev-slide').style.display = currentSlide === 0 ? 'none' : 'inline-block';
+    document.getElementById('next-slide').style.display = currentSlide === slidesData.length - 1 ? 'none' : 'inline-block';
+  }
+
+  function changeSlide(dir) {
+    currentSlide += dir;
+    if(currentSlide < 0) currentSlide = 0;
+    if(currentSlide >= slidesData.length) currentSlide = slidesData.length - 1;
+    renderSlide();
+  }
+  renderSlide();
+
+  let isPowerOn = false;
+  let potLevel = 1;
+  let areaVal = 1.0;
+  let fanAngle = 0;
+  let dustParticles = [
+    { x: 30, y: 110 }, { x: 45, y: 120 }, { x: 20, y: 130 }, { x: 35, y: 100 }
+  ];
+
+  function togglePower() {
+    isPowerOn = !isPowerOn;
+    let btn = document.getElementById('power-toggle');
+    btn.classList.toggle('active', isPowerOn);
+    btn.textContent = isPowerOn ? "ON ⏻" : "OFF ⏻";
+  }
+
+  function updatePot(val) {
+    potLevel = parseInt(val);
+    document.getElementById('val-pot').textContent = "Level " + potLevel;
+  }
+
+  function updateArea(val) {
+    areaVal = parseFloat(val);
+    let label = areaVal < 1.0 ? "Sempit" : (areaVal > 1.0 ? "Lebar" : "Normal");
+    document.getElementById('val-area').textContent = label;
+  }
+
+  function initVacuumCanvas() {
+    const canvas = document.getElementById('vacuumCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      let nozzleHeight = 40 * areaVal;
+      let nozzleY = 100 - (nozzleHeight / 2);
+
+      ctx.fillStyle = "#cbd5e1";
+      ctx.beginPath();
+      ctx.moveTo(50, nozzleY); 
+      ctx.lineTo(480, 50); 
+      ctx.lineTo(520, 150); 
+      ctx.lineTo(50, nozzleY + nozzleHeight);
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = "#64748b"; ctx.lineWidth = 3; ctx.stroke();
+
+      let fanX = 350, fanY = 100;
+      ctx.save();
+      ctx.translate(fanX, fanY);
+      if(isPowerOn) {
+        let effectiveSpeed = (potLevel * 3.0) / areaVal;
+        fanAngle += effectiveSpeed * 0.1;
+      }
+      ctx.rotate(fanAngle);
+      ctx.fillStyle = "#0284c7";
+      for (let i = 0; i < 4; i++) {
+        ctx.fillRect(-8, -35, 16, 35);
+        ctx.rotate(Math.PI / 2);
+      }
+      ctx.restore();
+
+      let effectiveSuction = isPowerOn ? (potLevel * 4.0) / areaVal : 0;
+      let pressureVal = isPowerOn ? (101.3 - (effectiveSuction * 3)).toFixed(1) : "101.3";
+
+      dustParticles.forEach(d => {
+        if(isPowerOn) {
+          d.x += effectiveSuction;
+          if(d.x > 200) {
+            d.x = 15 + Math.random()*20;
+            d.y = 90 + (Math.random()-0.5)*20;
+          }
+        }
+        ctx.fillStyle = "#854d0e";
+        ctx.beginPath(); ctx.arc(d.x, d.y, 3, 0, Math.PI*2); ctx.fill();
+      });
+
+      ctx.fillStyle = "#0f172a"; ctx.fillRect(360, 10, 230, 45);
+      ctx.strokeStyle = "#38bdf8"; ctx.strokeRect(360, 10, 230, 45);
+      ctx.fillStyle = "#38bdf8"; ctx.font = "bold 11px sans-serif";
+      ctx.fillText(`Tekanan Tabung: ${pressureVal} kPa`, 370, 25);
+      ctx.fillText(`Kecepatan Aliran (v): ${(effectiveSuction).toFixed(1)} m/s`, 370, 42);
+
+      requestAnimationFrame(render);
+    }
+    render();
+  }
+
+  function playSound(type) {
+    let audioPath = '';
+    if (type === 'ting') audioPath = 'assets/audio/sfx_benar.mp3';
+    else if (type === 'tot') audioPath = 'assets/audio/sfx_salah.mp3';
+    else if (type === 'ceo') audioPath = 'assets/audio/basuri-v3.mp3';
+    else if (type === 'remidi') audioPath = 'assets/audio/ngakak-laugh-annoying.mp3';
+
+    if (audioPath) {
+      let audio = new Audio(audioPath);
+      audio.play().catch(err => console.log("Audio play blocked:", err));
+    }
+  }
+
+  const quizData = [
+    {
+      type: "pg",
+      level: "SOLO: Unistruktural / C1 (Mengingat)",
+      q: "1. Hukum Bernoulli diturunkan berdasarkan prinsip dasar hukum kekekalan...",
+      options: ["Massa", "Energi Mekanik", "Momentum", "Muatan Listrik"],
+      correct: 1,
+      msg: "Benar! Hukum Bernoulli berlandaskan pada hukum kekekalan energi mekanik."
+    },
+    {
+      type: "tf",
+      level: "SOLO: Unistruktural / C2 (Memahami)",
+      q: "2. (Benar atau Salah): Pada bagian pipa yang menyempit, kecepatan aliran fluida akan meningkat, dan tekanan pada bagian tersebut akan ikut meningkat.",
+      options: ["Benar", "Salah"],
+      correct: 1,
+      msg: "Benar! Jawabannya Salah, karena kecepatan tinggi justru menyebabkan tekanan menurun."
+    },
+    {
+      type: "match",
+      level: "SOLO: Multistruktural / C2 (Memahami)",
+      q: "3. Jodohkan besaran fisika pada Persamaan Bernoulli dengan satuan SI yang tepat:<br>• Tekanan (P)<br>• Massa Jenis (ρ)<br>• Kecepatan (v)",
+      options: ["A. kg/m³ | B. Pascal (Pa) | C. m/s", "A. Pascal (Pa) | B. kg/m³ | C. m/s", "A. m/s | B. Pascal (Pa) | C. kg/m³"],
+      correct: 1,
+      msg: "Benar! Tekanan bersatuan Pa, massa jenis kg/m³, dan kecepatan m/s."
+    },
+    {
+      type: "order",
+      level: "SOLO: Relasional / C3 (Mengaplikasikan)",
+      q: "4. Urutkan langkah kerja hukum Bernoulli pada peristiwa aliran udara di dalam mesin vacuum cleaner:<br>(1) Udara luar tersedot masuk ke dalam tabung<br>(2) Motor menghidupkan baling-baling (kipas)<br>(3) Tekanan di dalam tabung menurun",
+      options: ["(2) ➔ (3) ➔ (1)", "(1) ➔ (2) ➔ (3)", "(3) ➔ (1) ➔ (2)"],
+      correct: 0,
+      msg: "Benar! Kipas berputar ➔ tekanan turun ➔ udara luar tersedot masuk."
+    },
+    {
+      type: "short",
+      level: "SOLO: Relasional / C3 (Soal Hitungan 1)",
+      q: "5. <b>[Soal Hitungan]</b> Air mengalir melalui pipa mendatar. Jika kecepatan aliran di penampang pertama $v_1 = 2\\text{ m/s}$ dengan luas penampang $A_1 = 0,4\\text{ m}^2$, dan luas penampang kedua $A_2 = 0,2\\text{ m}^2$, berapakah kecepatan aliran di penampang kedua ($v_2$) dalam $\\text{m/s}$?",
+      answer: "4",
+      msg: "Benar! Berdasarkan persamaan kontinuitas ($A_1v_1 = A_2v_2$): $0,4 \\times 2 = 0,2 \\times v_2 \\rightarrow v_2 = 4\\text{ m/s}$."
+    },
+    {
+      type: "drag",
+      level: "SOLO: Relasional / C4 (Menganalisis)",
+      q: "6. Jika luas penampang pipa diperkecil ($A_2 < A_1$), maka kecepatan aliran fluida ($v_2$) akan menjadi lebih ... daripada $v_1$.",
+      options: ["Besar / Cepat", "Kecil / Lambat", "Nol", "Tetap"],
+      correct: 0,
+      msg: "Benar! Berdasarkan persamaan kontinuitas, penampang menyempit memperbesar kecepatan aliran."
+    },
+    {
+      type: "pg",
+      level: "SOLO: Relasional / C4 (Menganalisis)",
+      q: "7. Mengapa pada desain sayap pesawat (aerofoil), bagian atas sayap dibuat melengkung agar udara mengalir lebih cepat?",
+      options: ["Agar pesawat terlihat indah", "Agar tekanan udara di atas sayap lebih kecil dibanding di bawah sayap, sehingga timbul gaya angkat", "Agar hambatan udara hilang total", "Agar mesin tidak cepat panas"],
+      correct: 1,
+      msg: "Tepat sekali! Kecepatan atas yang tinggi menghasilkan tekanan rendah di atas sayap."
+    },
+    {
+      type: "tf",
+      level: "SOLO: Extended Abstract / C5 (Mengevaluasi)",
+      q: "8. (Benar atau Salah): Memutar potensiometer ke level maksimal pada vacuum cleaner portabel akan memperbesar kecepatan motor, memperbesar kelajuan udara, serta menaikkan tekanan di dalam tabung.",
+      options: ["Benar", "Salah"],
+      correct: 1,
+      msg: "Benar! Jawabannya Salah, karena kecepatan tinggi justru menurunkan tekanan di dalam tabung."
+    },
+    {
+      type: "short",
+      level: "SOLO: Extended Abstract / C5 (Soal Hitungan 2)",
+      q: "9. <b>[Soal Hitungan]</b> Diketahui tekanan di penampang pertama pipa adalah $100.000\\text{ Pa}$ dengan kelajuan $2\\text{ m/s}$. Jika massa jenis air $1000\\text{ kg/m}^3$ dan kelajuan di penampang kedua menjadi $4\\text{ m/s}$ pada ketinggian yang sama ($h_1 = h_2$), berapakah besar tekanan di penampang kedua ($P_2$) dalam satuan $\\text{kPa}$?",
+      answer: "94",
+      msg: "Benar! $P_1 + \\frac{1}{2}\\rho v_1^2 = P_2 + \\frac{1}{2}\\rho v_2^2 \\rightarrow 100.000 + 0,5(1000)(4) = P_2 + 0,5(1000)(16) \\rightarrow 102.000 = P_2 + 8.000 \\rightarrow P_2 = 94.000\\text{ Pa} = 94\\text{ kPa}$."
+    },
+    {
+      type: "pg",
+      level: "SOLO: Extended Abstract / C6 (Mencipta)",
+      q: "10. Jika seorang siswa ingin merancang miniatur alat penyemprot desinfektan otomatis menggunakan prinsip Bernoulli, komponen paling krusial apa yang harus ia rancang?",
+      options: ["Memperlebar seluruh selang pembuangan", "Membuat nosel sempit untuk meniupkan udara berkecepatan tinggi di atas wadah cairan agar tekanan turun dan cairan terisap", "Menambahkan pemanas air di dalam tabung", "Memperbesar berat massa tabung utama"],
+      correct: 1,
+      msg: "Luar biasa! Desain nosel sempit menciptakan kelajuan tinggi yang menurunkan tekanan dan menyedot cairan ke atas."
+    }
+  ];
+
+  let currentQuiz = 0;
+  let totalScore = 0;
+
+  function loadQuiz() {
+    if(currentQuiz >= quizData.length) {
+      if(totalScore >= 80) playSound('ceo');
+      else playSound('remidi');
+
+      document.getElementById('quiz-container').innerHTML = `
+        <div style="text-align:center;">
+          <h3 style="color:var(--primary-dark);">🎉 Evaluasi Selesai!</h3>
+          <p style="font-size:1.2rem; font-weight:bold; margin:15px 0;">Total Skor Anda: <span style="color:var(--accent); font-size:2rem;">${totalScore}</span> / 100</p>
+          <p>${totalScore >= 80 ? '🏆 Luar biasa! Musik spesial berbunyi karena skor Anda mencapai ≥ 80!' : '💪 Tetap semangat! Silakan ulangi materi slide atau simulasi lab untuk meningkatkan skor Anda.'}</p>
+          <button class="btn-action" onclick="location.reload()" style="margin-top:15px;">Ulangi Evaluasi 🔄</button>
+        </div>
+      `;
+      return;
+    }
+
+    let data = quizData[currentQuiz];
+    document.getElementById('quiz-question').innerHTML = `<b>(${data.level})</b><br>${data.q}`;
+    let optHtml = '';
+
+    if (data.type === 'short') {
+      optHtml = `
+        <input type="text" id="short-answer-input" class="input-short" placeholder="Ketik angka jawaban hitungan di sini...">
+        <button class="btn-action" onclick="checkShortAnswer('${data.answer}', '${data.msg}')">Kirim Jawaban</button>
+      `;
+    } else {
+      data.options.forEach((opt, idx) => {
+        let btnClass = data.type === 'tf' ? 'tf-btn' : 'option-btn';
+        optHtml += `<button class="${btnClass}" onclick="checkAnswer(${idx}, ${data.correct}, '${data.msg}')">${data.type==='pg'||data.type==='match'||data.type==='order'?String.fromCharCode(65+idx)+'. ':''}${opt}</button>`;
+      });
+    }
+
+    document.getElementById('quiz-options').innerHTML = optHtml;
+    document.getElementById('quiz-feedback').textContent = '';
+    document.getElementById('next-quiz-btn').style.display = 'none';
+  }
+
+  function checkAnswer(selectedIdx, correctIdx, msg) {
+    let buttons = document.querySelectorAll('.option-btn, .tf-btn');
+    buttons.forEach((btn, idx) => {
+      btn.style.pointerEvents = 'none';
+      if(idx === correctIdx) btn.classList.add('correct');
+      else if(idx === selectedIdx) btn.classList.add('wrong');
+    });
+
+    let fb = document.getElementById('quiz-feedback');
+    if(selectedIdx === correctIdx) {
+      totalScore += 10;
+      playSound('ting');
+      fb.style.color = "var(--success)";
+      fb.textContent = "✅ Benar! (+10 poin). " + msg;
+    } else {
+      playSound('tot');
+      fb.style.color = "var(--danger)";
+      fb.textContent = "❌ Kurang tepat. " + msg;
+    }
+    document.getElementById('next-quiz-btn').style.display = 'inline-block';
+  }
+
+  function checkShortAnswer(correctKey, msg) {
+    let userVal = document.getElementById('short-answer-input').value.trim().toLowerCase();
+    let fb = document.getElementById('quiz-feedback');
+    document.getElementById('short-answer-input').disabled = true;
+
+    if(userVal.includes(correctKey.toLowerCase())) {
+      totalScore += 10;
+      playSound('ting');
+      fb.style.color = "var(--success)";
+      fb.textContent = "✅ Benar! (+10 poin). " + msg;
+    } else {
+      playSound('tot');
+      fb.style.color = "var(--danger)";
+      fb.textContent = `❌ Kurang tepat. Jawaban yang benar adalah "${correctKey}". ` + msg;
+    }
+    document.getElementById('next-quiz-btn').style.display = 'inline-block';
+  }
+
+  function nextQuiz() {
+    currentQuiz++;
+    loadQuiz();
+  }
+
+  // ==========================================
+  // DEKLARASI & FUNGSI IDENTITAS SISWA
+  // ==========================================
+  let studentData = { nama: "", kelas: "" };
+
+  function saveStudentIdentity() {
+    let nameInput = document.getElementById('input-student-name').value.trim();
+    let classInput = document.getElementById('input-student-class').value.trim();
+    let errorMsg = document.getElementById('student-modal-error');
+
+    if (!nameInput || !classInput) {
+      if (errorMsg) errorMsg.style.display = 'block';
+      return;
+    }
+
+    studentData.nama = nameInput;
+    studentData.kelas = classInput;
+
+    let welcomeName = document.getElementById('welcome-student-name');
+    let welcomeClass = document.getElementById('welcome-student-class');
+    let welcomeBanner = document.getElementById('student-info-banner');
+
+    if (welcomeName && welcomeClass && welcomeBanner) {
+      welcomeName.textContent = studentData.nama;
+      welcomeClass.textContent = studentData.kelas;
+      welcomeBanner.style.display = 'inline-block';
+    }
+
+    let modalBox = document.getElementById('student-modal');
+    if (modalBox) modalBox.style.display = 'none';
+  }
+
+  loadQuiz();
+</script>
+</body>
+</html>
